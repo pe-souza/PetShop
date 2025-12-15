@@ -1,0 +1,169 @@
+Site Institucional para Pet Shop (Web + Mobile)
+Backend e Frontend em Django | SQLite | Arquitetura por Apps | Admin Completo
+Crie um site institucional moderno para um pet shop, com foco em serviços e cuidados com animais, utilizando Django FullStack, com backend e frontend desenvolvidos em Django.
+⚠️ A pasta principal do projeto deve se chamar core.
+⚠️ O projeto deve ser dividido em múltiplos apps por responsabilidade (NÃO usar um único app).
+
+🐾 Objetivo do Projeto
+Desenvolver um sistema que:
+Apresente o pet shop de forma profissional
+Liste serviços cadastrados dinamicamente
+Transmita confiança, cuidado e carinho com os animais
+Facilite o contato via WhatsApp
+Possua painel administrativo completo para gestão dos serviços
+Seja leve, rápido e responsivo (web e mobile)
+
+⚙️ Tecnologias Obrigatórias
+🔹 Backend
+Python 3.10+
+Django (versão estável mais recente)
+Django Templates
+Django ORM
+Banco de dados: SQLite
+🔹 Frontend
+HTML5
+CSS3 (responsivo, mobile-first)
+JavaScript apenas se necessário
+Templates Django
+
+🗂️ Estrutura do Projeto (OBRIGATÓRIA)
+A estrutura deve seguir exatamente este padrão, com separação por apps:
+petshop/
+│
+├── manage.py
+├── requirements.txt
+├── db.sqlite3
+│
+├── core/                      ← PROJETO DJANGO
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   ├── asgi.py
+│   └── wsgi.py
+│
+├── apps/
+│   ├── pages/                 ← PÁGINAS INSTITUCIONAIS
+│   │   ├── migrations/
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── views.py
+│   │   ├── urls.py
+│   │   └── models.py
+│   │
+│   ├── services/              ← SERVIÇOS DO PET SHOP
+│   │   ├── migrations/
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── models.py
+│   │   ├── views.py
+│   │   └── urls.py
+│
+├── templates/
+│   ├── base.html
+│   ├── pages/
+│   │   ├── home.html
+│   │   ├── about.html
+│   │   └── contact.html
+│   │
+│   └── services/
+│       └── services_list.html
+│
+├── static/
+│   ├── css/
+│   │   └── style.css
+│   └── images/
+
+
+🧩 Apps e Responsabilidades
+📄 App: pages
+Responsável pelas páginas institucionais:
+Home
+Sobre
+Contato
+Sem models (apenas views e templates).
+
+✂️ App: services
+Responsável por:
+Cadastro de serviços
+Listagem dinâmica dos serviços no site
+Integração com o painel administrativo
+
+🗄️ Models (App services)
+Criar o modelo Service com os seguintes campos:
+name – CharField (nome do serviço)
+description – TextField (descrição)
+price – DecimalField
+is_active – BooleanField
+created_at – DateTimeField (auto_now_add)
+
+🛠️ Painel Administrativo (OBRIGATÓRIO)
+🔐 Django Admin
+Utilizar o Django Admin como painel do sistema.
+O administrador deve conseguir:
+✔️ Funcionalidades no Admin
+Criar serviços
+Editar serviços
+Ativar/desativar serviços
+Visualizar lista de serviços
+Filtrar serviços ativos/inativos
+Buscar serviços por nome
+Visualizar data de criação
+🔧 Customização do Admin
+No admin.py do app services:
+Definir list_display
+Definir list_filter
+Definir search_fields
+Definir ordenação
+
+🌐 Páginas do Site
+🏠 Home
+Banner com imagem de pets
+Frase de destaque
+Botão de contato via WhatsApp
+🐶 Sobre
+Texto institucional
+Missão, valores e cuidado com os animais
+✂️ Serviços
+Listagem dinâmica vinda do banco
+Apenas serviços ativos
+Cards responsivos
+📲 Contato
+Botão de WhatsApp com mensagem pré-preenchida
+
+🎨 Diretrizes de UI/UX
+Design clean e moderno
+Layout acolhedor
+Mobile-first
+Navegação simples e clara
+Além de seguir os design em anexo para se basear
+
+⚙️ Configurações Técnicas Obrigatórias
+Configurar INSTALLED_APPS corretamente
+Configurar TEMPLATES para pasta global
+Configurar STATIC_URL e STATICFILES_DIRS
+Separar URLs por app
+Usar herança de templates com base.html
+
+📄 Arquivo requirements.txt (OBRIGATÓRIO)
+Retornar o arquivo requirements.txt 
+(Incluir dependências extras somente se forem realmente necessárias)
+
+🎯 Resultado Esperado
+Um projeto:
+Django FullStack profissional
+Arquitetura limpa e escalável
+Separação correta por apps
+Painel administrativo funcional
+Fácil de rodar localmente
+Ideal para pequenos negócios
+
+📌 Observações Finais
+O sistema deve rodar com:
+python manage.py runserver
+
+
+Todas as páginas devem herdar de base.html
+Banco de dados SQLite
+Código organizado e comentado
