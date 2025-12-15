@@ -1,0 +1,103 @@
+{% extends 'admin_panel/base_admin.html' %}
+
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">✂️</div>
+        <div class="stat-info">
+            <span class="stat-value">{{ services_count }}</span>
+            <span class="stat-label">Total de Serviços</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-info">
+            <span class="stat-value">{{ active_services }}</span>
+            <span class="stat-label">Serviços Ativos</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">⭐</div>
+        <div class="stat-info">
+            <span class="stat-value">{{ testimonials_count }}</span>
+            <span class="stat-label">Depoimentos</span>
+        </div>
+    </div>
+    <div class="stat-card highlight">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-info">
+            <span class="stat-value">{{ pending_testimonials }}</span>
+            <span class="stat-label">Pendentes</span>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <div class="card">
+        <div class="card-header">
+            <h3>Serviços Recentes</h3>
+            <a href="{% url 'admin_panel:services_list' %}" class="link">Ver todos →</a>
+        </div>
+        <div class="card-body">
+            {% if recent_services %}
+            <ul class="list">
+                {% for service in recent_services %}
+                <li class="list-item">
+                    <span class="item-name">{{ service.name }}</span>
+                    <span class="badge {% if service.is_active %}badge-success{% else %}badge-inactive{% endif %}">
+                        {% if service.is_active %}Ativo{% else %}Inativo{% endif %}
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="empty-state">Nenhum serviço cadastrado.</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h3>Depoimentos Recentes</h3>
+            <a href="{% url 'admin_panel:testimonials_list' %}" class="link">Ver todos →</a>
+        </div>
+        <div class="card-body">
+            {% if recent_testimonials %}
+            <ul class="list">
+                {% for testimonial in recent_testimonials %}
+                <li class="list-item">
+                    <span class="item-name">{{ testimonial.author_name }}</span>
+                    <span class="badge {% if testimonial.status == 'approved' %}badge-success{% elif testimonial.status == 'pending' %}badge-warning{% else %}badge-danger{% endif %}">
+                        {{ testimonial.get_status_display }}
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="empty-state">Nenhum depoimento cadastrado.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="quick-actions">
+    <h3>Ações Rápidas</h3>
+    <div class="actions-grid">
+        <a href="{% url 'admin_panel:services_create' %}" class="action-card">
+            <span class="action-icon">➕</span>
+            <span>Novo Serviço</span>
+        </a>
+        <a href="{% url 'admin_panel:services_list' %}" class="action-card">
+            <span class="action-icon">📋</span>
+            <span>Gerenciar Serviços</span>
+        </a>
+        <a href="{% url 'admin_panel:testimonials_list' %}" class="action-card">
+            <span class="action-icon">💬</span>
+            <span>Ver Depoimentos</span>
+        </a>
+    </div>
+</div>
+{% endblock %}

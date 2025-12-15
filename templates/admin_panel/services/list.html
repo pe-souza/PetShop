@@ -1,0 +1,56 @@
+{% extends 'admin_panel/base_admin.html' %}
+
+{% block title %}Serviços{% endblock %}
+{% block page_title %}Gerenciar Serviços{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <a href="{% url 'admin_panel:services_create' %}" class="btn btn-primary">+ Novo Serviço</a>
+</div>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Preço</th>
+                    <th>Status</th>
+                    <th>Criado em</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for service in services %}
+                <tr>
+                    <td>
+                        <strong>{{ service.name }}</strong>
+                        <p class="table-subtitle">{{ service.description|truncatewords:10 }}</p>
+                    </td>
+                    <td>R$ {{ service.price }}</td>
+                    <td>
+                        <span class="badge {% if service.is_active %}badge-success{% else %}badge-inactive{% endif %}">
+                            {% if service.is_active %}Ativo{% else %}Inativo{% endif %}
+                        </span>
+                    </td>
+                    <td>{{ service.created_at|date:"d/m/Y" }}</td>
+                    <td>
+                        <div class="actions">
+                            <a href="{% url 'admin_panel:services_edit' service.pk %}" class="btn btn-sm btn-secondary">Editar</a>
+                            <a href="{% url 'admin_panel:services_toggle' service.pk %}" class="btn btn-sm {% if service.is_active %}btn-warning{% else %}btn-success{% endif %}">
+                                {% if service.is_active %}Desativar{% else %}Ativar{% endif %}
+                            </a>
+                            <a href="{% url 'admin_panel:services_delete' service.pk %}" class="btn btn-sm btn-danger">Excluir</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="empty-state">Nenhum serviço cadastrado.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

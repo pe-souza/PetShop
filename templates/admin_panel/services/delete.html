@@ -1,0 +1,23 @@
+{% extends 'admin_panel/base_admin.html' %}
+
+{% block title %}Excluir Serviço{% endblock %}
+{% block page_title %}Excluir Serviço{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body confirm-delete">
+        <div class="delete-icon">⚠️</div>
+        <h2>Confirmar Exclusão</h2>
+        <p>Tem certeza que deseja excluir o serviço <strong>"{{ service.name }}"</strong>?</p>
+        <p class="warning">Esta ação não pode ser desfeita.</p>
+        
+        <form method="post" class="delete-form">
+            {% csrf_token %}
+            <div class="form-actions">
+                <a href="{% url 'admin_panel:services_list' %}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-danger">Sim, Excluir</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

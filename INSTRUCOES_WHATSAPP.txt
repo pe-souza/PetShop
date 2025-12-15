@@ -1,0 +1,101 @@
+INSTRUÇÕES - PET SHOP AMIGO
+============================
+
+1. PAINEL ADMINISTRATIVO CUSTOMIZADO
+=====================================
+
+O sistema possui um painel administrativo próprio, desenvolvido com Django Templates,
+sem depender do Django Admin nativo.
+
+URL de Acesso: /admin-panel/
+Usuário: admin
+Senha: admin123
+
+2. COMO O ADMINISTRADOR ACESSA O PAINEL
+========================================
+
+1. Acesse: https://seu-dominio.com/admin-panel/
+2. Faça login com suas credenciais de administrador
+3. Você será redirecionado para o Dashboard
+
+3. CONTROLE DE PERMISSÕES
+==========================
+
+O sistema utiliza o sistema de autenticação do Django com verificação adicional:
+
+- Apenas usuários com is_staff=True ou is_superuser=True podem acessar
+- Usuários comuns são bloqueados e redirecionados ao site público
+- Cada rota administrativa é protegida pelo decorator @admin_required
+
+Código de verificação (decorators.py):
+```python
+def admin_required(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('admin_panel:login')
+        if not (request.user.is_staff or request.user.is_superuser):
+            return redirect('pages:home')
+        return view_func(request, *args, **kwargs)
+    return wrapper
+```
+
+4. FUNCIONALIDADES DO PAINEL
+=============================
+
+GESTÃO DE SERVIÇOS:
+- Listar todos os serviços
+- Criar novo serviço
+- Editar serviço existente
+- Ativar/desativar serviço
+- Excluir serviço
+
+GESTÃO DE DEPOIMENTOS:
+- Listar todos os depoimentos
+- Ver detalhes de um depoimento
+- Aprovar depoimentos
+- Reprovar depoimentos
+- Excluir depoimentos
+
+5. ROTAS ADMINISTRATIVAS
+=========================
+
+/admin-panel/              - Dashboard
+/admin-panel/login/        - Login
+/admin-panel/logout/       - Logout
+
+/admin-panel/services/           - Listar serviços
+/admin-panel/services/create/    - Criar serviço
+/admin-panel/services/<id>/edit/ - Editar serviço
+/admin-panel/services/<id>/delete/ - Excluir serviço
+/admin-panel/services/<id>/toggle/ - Ativar/desativar
+
+/admin-panel/testimonials/           - Listar depoimentos
+/admin-panel/testimonials/<id>/      - Ver depoimento
+/admin-panel/testimonials/<id>/approve/ - Aprovar
+/admin-panel/testimonials/<id>/reject/  - Reprovar
+/admin-panel/testimonials/<id>/delete/  - Excluir
+
+6. INTEGRAÇÃO WHATSAPP
+=======================
+
+O site possui integração com WhatsApp para contato rápido.
+
+Número configurado: 5511999999999
+Mensagem padrão: "Olá! Gostaria de agendar um serviço."
+
+Para alterar o número, edite os arquivos:
+- templates/base.html
+- templates/pages/home.html
+- templates/pages/contact.html
+- templates/services/services_list.html
+
+7. CRIANDO NOVOS ADMINISTRADORES
+=================================
+
+Via terminal:
+python manage.py createsuperuser
+
+Ou via Django shell:
+from django.contrib.auth.models import User
+User.objects.create_superuser('novo_admin', 'email@exemplo.com', 'senha123')
