@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sobre Nós - Pet Shop Amigo{% endblock %}
+
+{% block content %}
+<section class="about-hero">
+    <div class="container">
+        <div class="about-hero-content">
+            <div class="about-hero-text">
+                <span class="badge">QUEM SOMOS</span>
+                <h1>Cuidado que faz o <span class="highlight">rabo abanar!</span></h1>
+                <p>Mais que um pet shop, somos uma extensão da sua casa. Nascemos do amor pelos animais e da vontade de oferecer um espaço onde segurança, carinho e profissionalismo andam juntos.</p>
+                
+                <div class="features-row">
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <div>
+                            <h4>Ambiente Seguro</h4>
+                            <p>Monitoramento constante para a sua tranquilidade.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">❤️</span>
+                        <div>
+                            <h4>Muito Carinho</h4>
+                            <p>Equipe apaixonada que trata seu pet como filho.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="about-buttons">
+                    <a href="{% url 'services:list' %}" class="btn btn-primary">Nossos Serviços →</a>
+                    <a href="{% url 'pages:contact' %}" class="btn btn-outline">Fale Conosco</a>
+                </div>
+            </div>
+            <div class="about-hero-image">
+                <div class="about-img-placeholder">
+                    <span>🐕‍🦺</span>
+                </div>
+                <div class="testimonial-badge">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p>"A melhor equipe que já cuidou do Rex!"</p>
+                    <span class="author">M - Maria S.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="stats-section">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span class="stat-icon">📅</span>
+                <h3>5+</h3>
+                <p>Anos de História</p>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon">🐾</span>
+                <h3>2k+</h3>
+                <p>Pets Felizes</p>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon">👨‍⚕️</span>
+                <h3>15+</h3>
+                <p>Especialistas</p>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon">💯</span>
+                <h3>100%</h3>
+                <p>Dedicação</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="gallery-preview">
+    <div class="container">
+        <span class="section-badge">GALERIA</span>
+        <div class="gallery-header">
+            <div>
+                <h2>Um dia no nosso Pet Shop</h2>
+                <p>Confira a rotina de diversão e cuidados. Nossos espaços são projetados para garantir liberdade e segurança para seu melhor amigo.</p>
+            </div>
+            <a href="#" class="link-arrow">Ver tudo →</a>
+        </div>
+        
+        <div class="gallery-showcase">
+            <div class="gallery-main">
+                <div class="gallery-placeholder large">🐕</div>
+                <div class="gallery-label">
+                    <span class="label-tag">SERVIÇO PREMIUM</span>
+                    <h4>Banho & Tosa</h4>
+                </div>
+            </div>
+            <div class="gallery-secondary">
+                <div class="gallery-placeholder">🐈</div>
+            </div>
+            <div class="gallery-secondary">
+                <div class="gallery-placeholder">🐩</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mission-section">
+    <div class="container">
+        <div class="mission-grid">
+            <div class="mission-item">
+                <h3>Nossa Missão</h3>
+                <p>Proporcionar aos pets e seus tutores uma experiência de cuidado excepcional, com amor, respeito e profissionalismo em cada atendimento.</p>
+            </div>
+            <div class="mission-item">
+                <h3>Nossa Visão</h3>
+                <p>Ser referência em cuidados pet na região, reconhecida pela qualidade dos serviços e pelo carinho dedicado a cada animal.</p>
+            </div>
+            <div class="mission-item">
+                <h3>Nossos Valores</h3>
+                <p>Amor aos animais, transparência com os tutores, excelência nos serviços e compromisso com o bem-estar de cada pet.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Seu pet merece esse carinho!</h2>
+            <p>Agende uma visita e venha conhecer nossa estrutura completa.</p>
+            <a href="https://wa.me/5511999999999?text=Olá! Gostaria de agendar um serviço." class="btn btn-white">Agendar Agora</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
