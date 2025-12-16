@@ -62,17 +62,10 @@ A comprehensive Django-based pet shop management system with:
 - About page (/sobre/)
 - Contact page (/contato/)
 
-### WhatsApp Integration (Twilio)
-- **Fully configured with Twilio API**
-- WhatsApp number: 5511949694654
-- Required secrets (configured in Replit Secrets):
-  - TWILIO_ACCOUNT_SID
-  - TWILIO_AUTH_TOKEN
-  - TWILIO_WHATSAPP_FROM
-- Message templates for: confirmations, reminders, cancellations
-- Variable substitution: {cliente_nome}, {pet_nome}, {servico_nome}, {data}, {hora}
-- Automatic confirmation on appointment creation
-- Automatic cancellation notification on status change
+### WhatsApp Integration (Pending)
+- WhatsApp messaging is planned for future implementation
+- Will send: (1) confirmation when service is booked, (2) reminder when service time approaches
+- Users schedule services directly on the website at /agendar/
 
 ## Running the Project
 - Development: `python manage.py runserver 0.0.0.0:5000`
@@ -91,13 +84,12 @@ python manage.py migrate
 - WhatsApp integration priority
 
 ## Recent Changes
-- December 16, 2025: Twilio WhatsApp Integration Completed
-  - Fully integrated Twilio API for WhatsApp messaging
-  - Updated all templates with correct WhatsApp number (5511949694654)
-  - Automatic appointment confirmations via WhatsApp
-  - Automatic cancellation notifications via WhatsApp
-  - Automatic reminders via WhatsApp
-  - Added twilio package to requirements.txt
+- December 16, 2025: Removed Twilio, Updated Booking Flow
+  - Removed Twilio integration (will be redone later with different approach)
+  - All "Agendar" buttons now point to /agendar/ (online booking page)
+  - Services page shows nothing when no services are registered
+  - Removed floating WhatsApp button
+  - WhatsApp messaging stub ready for future implementation
 
 - December 16, 2025: Major restructure and feature expansion
   - Reorganized apps from /apps/ folder to root level

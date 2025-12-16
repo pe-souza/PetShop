@@ -142,10 +142,7 @@ def criar_agendamento_online(request):
             status='agendado'
         )
         
-        from whatsapp.services import enviar_confirmacao_agendamento
-        enviar_confirmacao_agendamento(agendamento)
-        
-        messages.success(request, 'Agendamento realizado com sucesso! Você receberá uma confirmação por WhatsApp.')
+        messages.success(request, 'Agendamento realizado com sucesso!')
         return redirect('pages:agendar_sucesso')
         
     except Exception as e:
