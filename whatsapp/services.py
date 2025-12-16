@@ -1,49 +1,53 @@
 import os
-import requests
 from datetime import datetime
 from django.conf import settings
+from twilio.rest import Client
 
 
 class WhatsAppService:
     def __init__(self):
-        self.api_url = os.environ.get('WHATSAPP_API_URL', '')
-        self.api_token = os.environ.get('WHATSAPP_API_TOKEN', '')
-        self.phone_number_id = os.environ.get('WHATSAPP_PHONE_NUMBER_ID', '')
-        self.enabled = bool(self.api_url and self.api_token)
+        self.account_sid = os.environ.get('TWILIO_ACCOUNT_SID', '')
+        self.auth_token = os.environ.get('TWILIO_AUTH_TOKEN', '')
+        self.whatsapp_from = os.environ.get('TWILIO_WHATSAPP_FROM', '')
+        self.enabled = bool(self.account_sid and self.auth_token and self.whatsapp_from)
+        
+        if self.enabled:
+            self.client = Client(self.account_sid, self.auth_token)
+        else:
+            self.client = None
     
     def format_phone(self, phone):
         phone = ''.join(filter(str.isdigit, phone))
         if not phone.startswith('55'):
             phone = '55' + phone
-        return phone
+        return f'whatsapp:+{phone}'
+    
+    def format_from_number(self):
+        from_number = self.whatsapp_from
+        if not from_number.startswith('whatsapp:'):
+            if not from_number.startswith('+'):
+                from_number = '+' + from_number
+            from_number = f'whatsapp:{from_number}'
+        return from_number
     
     def send_message(self, to_phone, message):
         if not self.enabled:
-            return {'success': False, 'error': 'WhatsApp API não configurada'}
+            return {'success': False, 'error': 'WhatsApp Twilio API não configurada'}
         
         try:
-            headers = {
-                'Authorization': f'Bearer {self.api_token}',
-                'Content-Type': 'application/json'
-            }
-            
-            payload = {
-                'messaging_product': 'whatsapp',
-                'to': self.format_phone(to_phone),
-                'type': 'text',
-                'text': {'body': message}
-            }
-            
-            response = requests.post(
-                f'{self.api_url}/{self.phone_number_id}/messages',
-                headers=headers,
-                json=payload
+            twilio_message = self.client.messages.create(
+                body=message,
+                from_=self.format_from_number(),
+                to=self.format_phone(to_phone)
             )
             
-            if response.status_code == 200:
-                return {'success': True, 'response': response.json()}
-            else:
-                return {'success': False, 'error': response.text}
+            return {
+                'success': True, 
+                'response': {
+                    'sid': twilio_message.sid,
+                    'status': twilio_message.status
+                }
+            }
         except Exception as e:
             return {'success': False, 'error': str(e)}
     
@@ -74,17 +78,17 @@ def enviar_confirmacao_agendamento(agendamento):
         template = MensagemTemplate.objects.get(tipo='confirmacao', ativo=True)
         mensagem = service.format_message(template.template, agendamento)
     except MensagemTemplate.DoesNotExist:
-        mensagem = f"""Olá {agendamento.cliente.nome}! 🐾
+        mensagem = f"""Ola {agendamento.cliente.nome}!
 
 Seu agendamento foi confirmado:
 
-📅 Data: {agendamento.data.strftime('%d/%m/%Y')}
-⏰ Horário: {agendamento.hora_inicio.strftime('%H:%M')}
-🐕 Pet: {agendamento.pet.nome}
-✂️ Serviço: {agendamento.servico.name}
-💰 Valor: R$ {agendamento.preco:.2f}
+Data: {agendamento.data.strftime('%d/%m/%Y')}
+Horario: {agendamento.hora_inicio.strftime('%H:%M')}
+Pet: {agendamento.pet.nome}
+Servico: {agendamento.servico.name}
+Valor: R$ {agendamento.preco:.2f}
 
-Pet Shop Amigo - Cuidando do seu pet com amor! 💜"""
+Pet Shop Amigo - Cuidando do seu pet com amor!"""
         template = None
     
     resultado = service.send_message(agendamento.cliente.telefone, mensagem)
@@ -115,16 +119,16 @@ def enviar_lembrete_agendamento(agendamento):
         template = MensagemTemplate.objects.get(tipo='lembrete', ativo=True)
         mensagem = service.format_message(template.template, agendamento)
     except MensagemTemplate.DoesNotExist:
-        mensagem = f"""Olá {agendamento.cliente.nome}! 🐾
+        mensagem = f"""Ola {agendamento.cliente.nome}!
 
-Lembrete: Seu agendamento é AMANHÃ!
+Lembrete: Seu agendamento e AMANHA!
 
-📅 Data: {agendamento.data.strftime('%d/%m/%Y')}
-⏰ Horário: {agendamento.hora_inicio.strftime('%H:%M')}
-🐕 Pet: {agendamento.pet.nome}
-✂️ Serviço: {agendamento.servico.name}
+Data: {agendamento.data.strftime('%d/%m/%Y')}
+Horario: {agendamento.hora_inicio.strftime('%H:%M')}
+Pet: {agendamento.pet.nome}
+Servico: {agendamento.servico.name}
 
-Esperamos você! 💜
+Esperamos voce!
 Pet Shop Amigo"""
         template = None
     
@@ -156,18 +160,18 @@ def enviar_cancelamento(agendamento):
         template = MensagemTemplate.objects.get(tipo='cancelamento', ativo=True)
         mensagem = service.format_message(template.template, agendamento)
     except MensagemTemplate.DoesNotExist:
-        mensagem = f"""Olá {agendamento.cliente.nome},
+        mensagem = f"""Ola {agendamento.cliente.nome},
 
 Seu agendamento foi cancelado:
 
-📅 Data: {agendamento.data.strftime('%d/%m/%Y')}
-⏰ Horário: {agendamento.hora_inicio.strftime('%H:%M')}
-🐕 Pet: {agendamento.pet.nome}
-✂️ Serviço: {agendamento.servico.name}
+Data: {agendamento.data.strftime('%d/%m/%Y')}
+Horario: {agendamento.hora_inicio.strftime('%H:%M')}
+Pet: {agendamento.pet.nome}
+Servico: {agendamento.servico.name}
 
 Para reagendar, entre em contato conosco.
 
-Pet Shop Amigo 💜"""
+Pet Shop Amigo"""
         template = None
     
     resultado = service.send_message(agendamento.cliente.telefone, mensagem)
