@@ -1,0 +1,45 @@
+{% extends 'admin_panel/base_admin.html' %}
+
+{% block title %}{{ titulo }}{% endblock %}
+{% block page_title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data" class="form">
+            {% csrf_token %}
+            
+            <h4>Dados de Acesso</h4>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Nome de Usuário (Login)</label>
+                    <input type="text" name="username" class="form-input" placeholder="Nome de usuário">
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" name="password" class="form-input" placeholder="Senha">
+                </div>
+                <div class="form-group">
+                    <label><input type="checkbox" name="is_admin" class="form-checkbox"> Administrador</label>
+                </div>
+            </div>
+            
+            <h4>Dados do Profissional</h4>
+            <div class="form-grid">
+                {% for field in form %}
+                <div class="form-group {% if field.errors %}has-error{% endif %}">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}<span class="error-text">{{ field.errors.0 }}</span>{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Salvar</button>
+                <a href="{% url 'admin_panel:profissionais_list' %}" class="btn">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

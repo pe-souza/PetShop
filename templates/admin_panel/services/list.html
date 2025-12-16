@@ -15,6 +15,7 @@
                 <tr>
                     <th>Nome</th>
                     <th>Preço</th>
+                    <th>Duração</th>
                     <th>Status</th>
                     <th>Criado em</th>
                     <th>Ações</th>
@@ -28,6 +29,7 @@
                         <p class="table-subtitle">{{ service.description|truncatewords:10 }}</p>
                     </td>
                     <td>R$ {{ service.price }}</td>
+                    <td>{{ service.duracao_minutos }} min</td>
                     <td>
                         <span class="badge {% if service.is_active %}badge-success{% else %}badge-inactive{% endif %}">
                             {% if service.is_active %}Ativo{% else %}Inativo{% endif %}
@@ -46,7 +48,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" class="empty-state">Nenhum serviço cadastrado.</td>
+                    <td colspan="6" class="empty-state">Nenhum serviço cadastrado.</td>
                 </tr>
                 {% endfor %}
             </tbody>

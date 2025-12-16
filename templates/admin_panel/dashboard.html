@@ -6,31 +6,31 @@
 {% block content %}
 <div class="stats-grid">
     <div class="stat-card">
-        <div class="stat-icon">✂️</div>
+        <div class="stat-icon">👥</div>
         <div class="stat-info">
-            <span class="stat-value">{{ services_count }}</span>
-            <span class="stat-label">Total de Serviços</span>
+            <span class="stat-value">{{ total_clientes|default:0 }}</span>
+            <span class="stat-label">Clientes</span>
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon">✅</div>
+        <div class="stat-icon">🐕</div>
         <div class="stat-info">
-            <span class="stat-value">{{ active_services }}</span>
-            <span class="stat-label">Serviços Ativos</span>
+            <span class="stat-value">{{ total_pets|default:0 }}</span>
+            <span class="stat-label">Pets</span>
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon">⭐</div>
+        <div class="stat-icon">📅</div>
         <div class="stat-info">
-            <span class="stat-value">{{ testimonials_count }}</span>
-            <span class="stat-label">Depoimentos</span>
+            <span class="stat-value">{{ agendamentos_hoje|default:0 }}</span>
+            <span class="stat-label">Agendamentos Hoje</span>
         </div>
     </div>
     <div class="stat-card highlight">
-        <div class="stat-icon">⏳</div>
+        <div class="stat-icon">💰</div>
         <div class="stat-info">
-            <span class="stat-value">{{ pending_testimonials }}</span>
-            <span class="stat-label">Pendentes</span>
+            <span class="stat-value">R$ {{ faturamento_mes|floatformat:2|default:"0,00" }}</span>
+            <span class="stat-label">Faturamento Mês</span>
         </div>
     </div>
 </div>
@@ -38,46 +38,55 @@
 <div class="dashboard-grid">
     <div class="card">
         <div class="card-header">
-            <h3>Serviços Recentes</h3>
-            <a href="{% url 'admin_panel:services_list' %}" class="link">Ver todos →</a>
+            <h3>Próximos Agendamentos</h3>
+            <a href="{% url 'admin_panel:agenda' %}" class="link">Ver Agenda →</a>
         </div>
         <div class="card-body">
-            {% if recent_services %}
-            <ul class="list">
-                {% for service in recent_services %}
-                <li class="list-item">
-                    <span class="item-name">{{ service.name }}</span>
-                    <span class="badge {% if service.is_active %}badge-success{% else %}badge-inactive{% endif %}">
-                        {% if service.is_active %}Ativo{% else %}Inativo{% endif %}
-                    </span>
-                </li>
-                {% endfor %}
-            </ul>
+            {% if proximos_agendamentos %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Data/Hora</th>
+                        <th>Cliente</th>
+                        <th>Pet</th>
+                        <th>Serviço</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in proximos_agendamentos %}
+                    <tr>
+                        <td>{{ a.data|date:"d/m" }} {{ a.hora_inicio|time:"H:i" }}</td>
+                        <td>{{ a.cliente.nome }}</td>
+                        <td>{{ a.pet.nome }}</td>
+                        <td>{{ a.servico.name }}</td>
+                        <td><span class="badge badge-{{ a.status }}">{{ a.get_status_display }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
             {% else %}
-            <p class="empty-state">Nenhum serviço cadastrado.</p>
+            <p class="empty-state">Nenhum agendamento próximo</p>
             {% endif %}
         </div>
     </div>
     
     <div class="card">
         <div class="card-header">
-            <h3>Depoimentos Recentes</h3>
-            <a href="{% url 'admin_panel:testimonials_list' %}" class="link">Ver todos →</a>
+            <h3>Serviços Populares</h3>
         </div>
         <div class="card-body">
-            {% if recent_testimonials %}
+            {% if servicos_populares %}
             <ul class="list">
-                {% for testimonial in recent_testimonials %}
+                {% for s in servicos_populares %}
                 <li class="list-item">
-                    <span class="item-name">{{ testimonial.author_name }}</span>
-                    <span class="badge {% if testimonial.status == 'approved' %}badge-success{% elif testimonial.status == 'pending' %}badge-warning{% else %}badge-danger{% endif %}">
-                        {{ testimonial.get_status_display }}
-                    </span>
+                    <span class="item-name">{{ s.servico__name }}</span>
+                    <span class="badge badge-success">{{ s.total }} atendimentos</span>
                 </li>
                 {% endfor %}
             </ul>
             {% else %}
-            <p class="empty-state">Nenhum depoimento cadastrado.</p>
+            <p class="empty-state">Nenhum serviço realizado ainda</p>
             {% endif %}
         </div>
     </div>
@@ -86,17 +95,21 @@
 <div class="quick-actions">
     <h3>Ações Rápidas</h3>
     <div class="actions-grid">
+        <a href="{% url 'admin_panel:agendamentos_create' %}" class="action-card">
+            <span class="action-icon">📅</span>
+            <span>Novo Agendamento</span>
+        </a>
+        <a href="{% url 'admin_panel:clientes_create' %}" class="action-card">
+            <span class="action-icon">👤</span>
+            <span>Novo Cliente</span>
+        </a>
+        <a href="{% url 'admin_panel:pets_create' %}" class="action-card">
+            <span class="action-icon">🐾</span>
+            <span>Novo Pet</span>
+        </a>
         <a href="{% url 'admin_panel:services_create' %}" class="action-card">
-            <span class="action-icon">➕</span>
+            <span class="action-icon">✂️</span>
             <span>Novo Serviço</span>
-        </a>
-        <a href="{% url 'admin_panel:services_list' %}" class="action-card">
-            <span class="action-icon">📋</span>
-            <span>Gerenciar Serviços</span>
-        </a>
-        <a href="{% url 'admin_panel:testimonials_list' %}" class="action-card">
-            <span class="action-icon">💬</span>
-            <span>Ver Depoimentos</span>
         </a>
     </div>
 </div>

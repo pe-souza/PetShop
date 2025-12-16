@@ -1,0 +1,54 @@
+{% extends 'admin_panel/base_admin.html' %}
+
+{% block title %}{{ pet.nome }}{% endblock %}
+{% block page_title %}{{ pet.nome }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <a href="{% url 'admin_panel:pets_edit' pet.pk %}" class="btn btn-primary">Editar</a>
+    <a href="{% url 'admin_panel:agendamentos_create' %}" class="btn btn-success">+ Agendar</a>
+</div>
+
+<div class="detail-grid">
+    <div class="card">
+        <div class="card-header"><h3>Informações</h3></div>
+        <div class="card-body">
+            <dl class="detail-list">
+                <dt>Dono</dt><dd><a href="{% url 'admin_panel:clientes_detail' pet.cliente.pk %}">{{ pet.cliente.nome }}</a></dd>
+                <dt>Espécie</dt><dd>{{ pet.get_especie_display }}</dd>
+                <dt>Raça</dt><dd>{{ pet.raca|default:"-" }}</dd>
+                <dt>Porte</dt><dd>{{ pet.get_porte_display|default:"-" }}</dd>
+                <dt>Idade</dt><dd>{% if pet.idade %}{{ pet.idade }} anos{% else %}-{% endif %}</dd>
+                <dt>Peso</dt><dd>{% if pet.peso %}{{ pet.peso }} kg{% else %}-{% endif %}</dd>
+                <dt>Cor/Pelagem</dt><dd>{{ pet.cor|default:"-" }}</dd>
+                <dt>Alergias</dt><dd>{{ pet.alergias|default:"Nenhuma" }}</dd>
+                <dt>Observações</dt><dd>{{ pet.observacoes|default:"-" }}</dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h3>Histórico de Atendimentos</h3></div>
+    <div class="card-body">
+        {% if historico %}
+        <table class="table">
+            <thead><tr><th>Data</th><th>Serviço</th><th>Profissional</th><th>Status</th><th>Valor</th></tr></thead>
+            <tbody>
+                {% for a in historico %}
+                <tr>
+                    <td>{{ a.data|date:"d/m/Y" }}</td>
+                    <td>{{ a.servico.name }}</td>
+                    <td>{{ a.profissional.nome|default:"-" }}</td>
+                    <td><span class="badge badge-{{ a.status }}">{{ a.get_status_display }}</span></td>
+                    <td>R$ {{ a.preco|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty-state">Nenhum atendimento registrado.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

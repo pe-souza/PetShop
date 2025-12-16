@@ -1,0 +1,64 @@
+{% extends 'admin_panel/base_admin.html' %}
+
+{% block title %}Agendamentos{% endblock %}
+{% block page_title %}Agendamentos{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <form method="get" class="filter-form">
+        <select name="status" class="form-input">
+            <option value="">Todos os status</option>
+            {% for value, label in status_choices %}
+            <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <input type="date" name="data" value="{{ data_filter }}" class="form-input">
+        <button type="submit" class="btn">Filtrar</button>
+    </form>
+    <a href="{% url 'admin_panel:agendamentos_create' %}" class="btn btn-primary">+ Novo Agendamento</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if agendamentos %}
+        <table class="table">
+            <thead><tr><th>Data/Hora</th><th>Cliente</th><th>Pet</th><th>Serviço</th><th>Profissional</th><th>Status</th><th>Valor</th><th>Ações</th></tr></thead>
+            <tbody>
+                {% for a in agendamentos %}
+                <tr>
+                    <td>{{ a.data|date:"d/m/Y" }} {{ a.hora_inicio|time:"H:i" }}</td>
+                    <td>{{ a.cliente.nome }}</td>
+                    <td>{{ a.pet.nome }}</td>
+                    <td>{{ a.servico.name }}</td>
+                    <td>{{ a.profissional.nome|default:"-" }}</td>
+                    <td><span class="badge badge-{{ a.status }}">{{ a.get_status_display }}</span></td>
+                    <td>R$ {{ a.preco|floatformat:2 }}</td>
+                    <td class="actions">
+                        <a href="{% url 'admin_panel:agendamentos_edit' a.pk %}" class="btn btn-sm">Editar</a>
+                        {% if a.status == 'agendado' %}
+                        <a href="{% url 'admin_panel:agendamentos_status' a.pk 'confirmado' %}" class="btn btn-sm btn-success">Confirmar</a>
+                        {% endif %}
+                        {% if a.status == 'confirmado' %}
+                        <a href="{% url 'admin_panel:agendamentos_status' a.pk 'concluido' %}" class="btn btn-sm btn-success">Concluir</a>
+                        {% endif %}
+                        {% if a.status != 'cancelado' and a.status != 'concluido' %}
+                        <a href="{% url 'admin_panel:agendamentos_status' a.pk 'cancelado' %}" class="btn btn-sm btn-danger">Cancelar</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if agendamentos.has_other_pages %}
+        <div class="pagination">
+            {% if agendamentos.has_previous %}<a href="?page={{ agendamentos.previous_page_number }}">&laquo;</a>{% endif %}
+            <span>{{ agendamentos.number }} / {{ agendamentos.paginator.num_pages }}</span>
+            {% if agendamentos.has_next %}<a href="?page={{ agendamentos.next_page_number }}">&raquo;</a>{% endif %}
+        </div>
+        {% endif %}
+        {% else %}
+        <p class="empty-state">Nenhum agendamento encontrado.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,7 +1,12 @@
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin-panel/', include('apps.admin_panel.urls')),
-    path('servicos/', include('apps.services.urls')),
-    path('', include('apps.pages.urls')),
+    path('admin-panel/', include('admin_panel.urls')),
+    path('servicos/', include('servicos.urls')),
+    path('', include('pages.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

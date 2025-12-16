@@ -1,0 +1,49 @@
+{% extends 'admin_panel/base_admin.html' %}
+
+{% block title %}Horários - {{ profissional.nome }}{% endblock %}
+{% block page_title %}Horários de {{ profissional.nome }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header"><h3>Adicionar Horário</h3></div>
+    <div class="card-body">
+        <form method="post" class="form form-inline">
+            {% csrf_token %}
+            <div class="form-grid">
+                {% for field in form %}
+                <div class="form-group">
+                    <label>{{ field.label }}</label>
+                    {{ field }}
+                </div>
+                {% endfor %}
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Adicionar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h3>Horários Cadastrados</h3></div>
+    <div class="card-body">
+        {% if horarios %}
+        <table class="table">
+            <thead><tr><th>Dia</th><th>Início</th><th>Fim</th><th>Status</th></tr></thead>
+            <tbody>
+                {% for h in horarios %}
+                <tr>
+                    <td>{{ h.get_dia_semana_display }}</td>
+                    <td>{{ h.hora_inicio|time:"H:i" }}</td>
+                    <td>{{ h.hora_fim|time:"H:i" }}</td>
+                    <td><span class="badge {% if h.ativo %}badge-success{% else %}badge-inactive{% endif %}">{% if h.ativo %}Ativo{% else %}Inativo{% endif %}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty-state">Nenhum horário cadastrado.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Agendar Online - Pet Shop Amigo{% endblock %}
+
+{% block content %}
+<section class="booking-section">
+    <div class="container">
+        <h1>Agende Online</h1>
+        <p class="subtitle">Preencha o formulário abaixo para agendar um serviço para seu pet</p>
+        
+        <form method="post" action="{% url 'pages:criar_agendamento' %}" class="booking-form" id="booking-form">
+            {% csrf_token %}
+            
+            <div class="form-section">
+                <h3>Seus Dados</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="nome">Nome Completo *</label>
+                        <input type="text" id="nome" name="nome" required class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="telefone">WhatsApp *</label>
+                        <input type="tel" id="telefone" name="telefone" required class="form-input" placeholder="(00) 00000-0000">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" class="form-input">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3>Dados do Pet</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="pet_nome">Nome do Pet *</label>
+                        <input type="text" id="pet_nome" name="pet_nome" required class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="pet_especie">Espécie *</label>
+                        <select id="pet_especie" name="pet_especie" required class="form-input">
+                            <option value="cachorro">Cachorro</option>
+                            <option value="gato">Gato</option>
+                            <option value="ave">Ave</option>
+                            <option value="roedor">Roedor</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="pet_porte">Porte *</label>
+                        <select id="pet_porte" name="pet_porte" required class="form-input">
+                            <option value="pequeno">Pequeno</option>
+                            <option value="medio">Médio</option>
+                            <option value="grande">Grande</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3>Agendamento</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="servico">Serviço *</label>
+                        <select id="servico" name="servico" required class="form-input">
+                            <option value="">Selecione um serviço</option>
+                            {% for s in servicos %}
+                            <option value="{{ s.pk }}" data-duracao="{{ s.duracao_minutos }}">{{ s.name }} - R$ {{ s.price }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="profissional">Profissional</label>
+                        <select id="profissional" name="profissional" class="form-input">
+                            <option value="">Qualquer disponível</option>
+                            {% for p in profissionais %}
+                            <option value="{{ p.pk }}">{{ p.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="data">Data *</label>
+                        <input type="date" id="data" name="data" required class="form-input" min="{{ today }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="hora">Horário *</label>
+                        <select id="hora" name="hora" required class="form-input" disabled>
+                            <option value="">Selecione a data primeiro</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="observacoes">Observações</label>
+                    <textarea id="observacoes" name="observacoes" class="form-input" rows="3" placeholder="Alguma informação importante sobre seu pet?"></textarea>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-lg">Confirmar Agendamento</button>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('data').addEventListener('change', loadHorarios);
+document.getElementById('profissional').addEventListener('change', loadHorarios);
+document.getElementById('servico').addEventListener('change', loadHorarios);
+
+function loadHorarios() {
+    var data = document.getElementById('data').value;
+    var profissional = document.getElementById('profissional').value;
+    var servico = document.getElementById('servico').value;
+    var horaSelect = document.getElementById('hora');
+    
+    if (!data || !servico) {
+        horaSelect.innerHTML = '<option value="">Selecione data e serviço</option>';
+        horaSelect.disabled = true;
+        return;
+    }
+    
+    horaSelect.innerHTML = '<option value="">Carregando...</option>';
+    
+    fetch('/agendar/horarios/?data=' + data + '&profissional=' + profissional + '&servico=' + servico)
+        .then(response => response.json())
+        .then(data => {
+            horaSelect.innerHTML = '';
+            if (data.horarios.length === 0) {
+                horaSelect.innerHTML = '<option value="">Nenhum horário disponível</option>';
+                horaSelect.disabled = true;
+            } else {
+                horaSelect.innerHTML = '<option value="">Selecione um horário</option>';
+                data.horarios.forEach(function(hora) {
+                    var option = document.createElement('option');
+                    option.value = hora;
+                    option.textContent = hora;
+                    horaSelect.appendChild(option);
+                });
+                horaSelect.disabled = false;
+            }
+        });
+}
+</script>
+{% endblock %}

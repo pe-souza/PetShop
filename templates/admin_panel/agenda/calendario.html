@@ -1,0 +1,93 @@
+{% extends 'admin_panel/base_admin.html' %}
+
+{% block title %}Agenda{% endblock %}
+{% block page_title %}Agenda{% endblock %}
+
+{% block extra_css %}
+<style>
+    .fc { max-width: 100%; margin: 0 auto; }
+    .fc-event { cursor: pointer; }
+    .calendar-filters { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .calendar-legend { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem; }
+    .legend-item { display: flex; align-items: center; gap: 0.5rem; }
+    .legend-color { width: 16px; height: 16px; border-radius: 4px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <a href="{% url 'admin_panel:agendamentos_create' %}" class="btn btn-primary">+ Novo Agendamento</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="calendar-filters">
+            <form method="get" class="form-inline">
+                <select name="profissional" class="form-input" onchange="this.form.submit()">
+                    <option value="">Todos os profissionais</option>
+                    {% for p in profissionais %}
+                    <option value="{{ p.pk }}" {% if profissional_selecionado == p.pk|stringformat:"s" %}selected{% endif %}>{{ p.nome }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+        
+        <div id="calendar"></div>
+        
+        <div class="calendar-legend">
+            {% for p in profissionais %}
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: {{ p.cor_agenda }}"></div>
+                <span>{{ p.nome }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div id="modal-agendamento" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h3 id="modal-titulo"></h3>
+        <div id="modal-detalhes"></div>
+        <div class="modal-actions">
+            <a id="modal-editar" href="#" class="btn btn-primary">Editar</a>
+            <button onclick="document.getElementById('modal-agendamento').style.display='none'" class="btn">Fechar</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'timeGridWeek',
+        locale: 'pt-br',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        slotMinTime: '07:00:00',
+        slotMaxTime: '21:00:00',
+        events: '{% url "admin_panel:agenda_json" %}',
+        eventClick: function(info) {
+            var props = info.event.extendedProps;
+            document.getElementById('modal-titulo').textContent = info.event.title;
+            document.getElementById('modal-detalhes').innerHTML = 
+                '<p><strong>Cliente:</strong> ' + props.cliente + '</p>' +
+                '<p><strong>Pet:</strong> ' + props.pet + '</p>' +
+                '<p><strong>Serviço:</strong> ' + props.servico + '</p>' +
+                '<p><strong>Profissional:</strong> ' + props.profissional + '</p>' +
+                '<p><strong>Status:</strong> ' + props.status + '</p>' +
+                '<p><strong>Valor:</strong> R$ ' + props.preco + '</p>';
+            document.getElementById('modal-editar').href = '/admin-panel/agendamentos/' + info.event.id + '/editar/';
+            document.getElementById('modal-agendamento').style.display = 'flex';
+        }
+    });
+    calendar.render();
+});
+</script>
+{% endblock %}

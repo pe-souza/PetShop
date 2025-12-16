@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Agendamento Confirmado - Pet Shop Amigo{% endblock %}
+
+{% block content %}
+<section class="success-section">
+    <div class="container text-center">
+        <div class="success-icon">✅</div>
+        <h1>Agendamento Realizado!</h1>
+        <p class="lead">Seu agendamento foi confirmado com sucesso.</p>
+        <p>Você receberá uma confirmação pelo WhatsApp com todos os detalhes.</p>
+        <div class="success-actions">
+            <a href="{% url 'pages:home' %}" class="btn btn-primary">Voltar ao Início</a>
+            <a href="{% url 'pages:agendar_online' %}" class="btn">Fazer Novo Agendamento</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

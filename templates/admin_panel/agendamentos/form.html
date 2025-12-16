@@ -1,0 +1,50 @@
+{% extends 'admin_panel/base_admin.html' %}
+
+{% block title %}{{ titulo }}{% endblock %}
+{% block page_title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <form method="post" class="form" id="agendamento-form">
+            {% csrf_token %}
+            <div class="form-grid">
+                {% for field in form %}
+                <div class="form-group {% if field.errors %}has-error{% endif %}">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}<span class="error-text">{{ field.errors.0 }}</span>{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Salvar</button>
+                <a href="{% url 'admin_panel:agenda' %}" class="btn">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('id_cliente').addEventListener('change', function() {
+    var clienteId = this.value;
+    var petSelect = document.getElementById('id_pet');
+    petSelect.innerHTML = '<option value="">---------</option>';
+    
+    if (clienteId) {
+        fetch('/admin-panel/api/pets/?cliente_id=' + clienteId)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(function(pet) {
+                    var option = document.createElement('option');
+                    option.value = pet.id;
+                    option.textContent = pet.nome;
+                    petSelect.appendChild(option);
+                });
+            });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'admin_panel/base_admin.html' %}
+
+{% block title %}{{ cliente.nome }}{% endblock %}
+{% block page_title %}{{ cliente.nome }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <a href="{% url 'admin_panel:clientes_edit' cliente.pk %}" class="btn btn-primary">Editar</a>
+    <a href="{% url 'admin_panel:pets_create' %}?cliente={{ cliente.pk }}" class="btn btn-success">+ Novo Pet</a>
+    <a href="{% url 'admin_panel:agendamentos_create' %}?cliente={{ cliente.pk }}" class="btn">+ Agendar</a>
+</div>
+
+<div class="detail-grid">
+    <div class="card">
+        <div class="card-header"><h3>Informações</h3></div>
+        <div class="card-body">
+            <dl class="detail-list">
+                <dt>Telefone</dt><dd>{{ cliente.telefone }}</dd>
+                <dt>Email</dt><dd>{{ cliente.email|default:"-" }}</dd>
+                <dt>CPF</dt><dd>{{ cliente.cpf|default:"-" }}</dd>
+                <dt>Endereço</dt><dd>{{ cliente.endereco|default:"-" }}</dd>
+                <dt>Bairro</dt><dd>{{ cliente.bairro|default:"-" }}</dd>
+                <dt>Cidade</dt><dd>{{ cliente.cidade|default:"-" }}</dd>
+                <dt>Observações</dt><dd>{{ cliente.observacoes|default:"-" }}</dd>
+            </dl>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header"><h3>Pets ({{ pets.count }})</h3></div>
+        <div class="card-body">
+            {% if pets %}
+            <ul class="list">
+                {% for pet in pets %}
+                <li class="list-item">
+                    <a href="{% url 'admin_panel:pets_detail' pet.pk %}">{{ pet.nome }}</a>
+                    <span class="text-muted">{{ pet.especie }} - {{ pet.raca|default:"Sem raça" }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="empty-state">Nenhum pet cadastrado.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h3>Últimos Agendamentos</h3></div>
+    <div class="card-body">
+        {% if agendamentos %}
+        <table class="table">
+            <thead><tr><th>Data</th><th>Pet</th><th>Serviço</th><th>Status</th><th>Valor</th></tr></thead>
+            <tbody>
+                {% for a in agendamentos %}
+                <tr>
+                    <td>{{ a.data|date:"d/m/Y" }} {{ a.hora_inicio|time:"H:i" }}</td>
+                    <td>{{ a.pet.nome }}</td>
+                    <td>{{ a.servico.name }}</td>
+                    <td><span class="badge badge-{{ a.status }}">{{ a.get_status_display }}</span></td>
+                    <td>R$ {{ a.preco|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty-state">Nenhum agendamento registrado.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

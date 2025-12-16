@@ -1,0 +1,47 @@
+{% extends 'admin_panel/base_admin.html' %}
+
+{% block title %}Folgas - {{ profissional.nome }}{% endblock %}
+{% block page_title %}Folgas de {{ profissional.nome }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header"><h3>Registrar Folga</h3></div>
+    <div class="card-body">
+        <form method="post" class="form form-inline">
+            {% csrf_token %}
+            <div class="form-grid">
+                {% for field in form %}
+                <div class="form-group">
+                    <label>{{ field.label }}</label>
+                    {{ field }}
+                </div>
+                {% endfor %}
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Registrar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h3>Próximas Folgas</h3></div>
+    <div class="card-body">
+        {% if folgas %}
+        <table class="table">
+            <thead><tr><th>Data</th><th>Motivo</th></tr></thead>
+            <tbody>
+                {% for f in folgas %}
+                <tr>
+                    <td>{{ f.data|date:"d/m/Y" }}</td>
+                    <td>{{ f.motivo|default:"-" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty-state">Nenhuma folga registrada.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

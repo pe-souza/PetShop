@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
     <div class="admin-layout">
@@ -24,14 +26,44 @@
                     <span class="nav-icon">📊</span>
                     <span>Dashboard</span>
                 </a>
+                <a href="{% url 'admin_panel:agenda' %}" class="nav-item {% if 'agenda' in request.resolver_match.url_name %}active{% endif %}">
+                    <span class="nav-icon">📅</span>
+                    <span>Agenda</span>
+                </a>
+                <a href="{% url 'admin_panel:agendamentos_list' %}" class="nav-item {% if 'agendamentos' in request.resolver_match.url_name %}active{% endif %}">
+                    <span class="nav-icon">📋</span>
+                    <span>Agendamentos</span>
+                </a>
+                <a href="{% url 'admin_panel:clientes_list' %}" class="nav-item {% if 'clientes' in request.resolver_match.url_name %}active{% endif %}">
+                    <span class="nav-icon">👥</span>
+                    <span>Clientes</span>
+                </a>
+                <a href="{% url 'admin_panel:pets_list' %}" class="nav-item {% if 'pets' in request.resolver_match.url_name %}active{% endif %}">
+                    <span class="nav-icon">🐕</span>
+                    <span>Pets</span>
+                </a>
                 <a href="{% url 'admin_panel:services_list' %}" class="nav-item {% if 'services' in request.resolver_match.url_name %}active{% endif %}">
                     <span class="nav-icon">✂️</span>
                     <span>Serviços</span>
+                </a>
+                <a href="{% url 'admin_panel:profissionais_list' %}" class="nav-item {% if 'profissionais' in request.resolver_match.url_name %}active{% endif %}">
+                    <span class="nav-icon">👨‍⚕️</span>
+                    <span>Profissionais</span>
+                </a>
+                <a href="{% url 'admin_panel:relatorios' %}" class="nav-item {% if 'relatorios' in request.resolver_match.url_name %}active{% endif %}">
+                    <span class="nav-icon">📈</span>
+                    <span>Relatórios</span>
                 </a>
                 <a href="{% url 'admin_panel:testimonials_list' %}" class="nav-item {% if 'testimonials' in request.resolver_match.url_name %}active{% endif %}">
                     <span class="nav-icon">⭐</span>
                     <span>Depoimentos</span>
                 </a>
+                {% if request.user.is_superuser %}
+                <a href="{% url 'admin_panel:whatsapp_config' %}" class="nav-item {% if 'whatsapp' in request.resolver_match.url_name %}active{% endif %}">
+                    <span class="nav-icon">💬</span>
+                    <span>WhatsApp</span>
+                </a>
+                {% endif %}
             </nav>
             <div class="sidebar-footer">
                 <a href="{% url 'pages:home' %}" class="nav-item" target="_blank">
@@ -50,7 +82,7 @@
                 <h1 class="page-title">{% block page_title %}Dashboard{% endblock %}</h1>
                 <div class="user-info">
                     <span class="user-name">{{ request.user.username }}</span>
-                    <span class="user-badge">Admin</span>
+                    <span class="user-badge">{% if request.user.is_superuser %}Admin{% else %}Staff{% endif %}</span>
                 </div>
             </header>
             
@@ -70,5 +102,6 @@
             </div>
         </main>
     </div>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

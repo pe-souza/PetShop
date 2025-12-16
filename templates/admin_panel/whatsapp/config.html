@@ -1,0 +1,70 @@
+{% extends 'admin_panel/base_admin.html' %}
+
+{% block title %}Configuração WhatsApp{% endblock %}
+{% block page_title %}WhatsApp{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header"><h3>Novo Template de Mensagem</h3></div>
+    <div class="card-body">
+        <form method="post" class="form">
+            {% csrf_token %}
+            <div class="form-grid">
+                {% for field in form %}
+                <div class="form-group">
+                    <label>{{ field.label }}</label>
+                    {{ field }}
+                </div>
+                {% endfor %}
+            </div>
+            <p class="help-text">Variáveis disponíveis: {cliente_nome}, {pet_nome}, {servico_nome}, {data}, {hora}, {profissional_nome}, {preco}</p>
+            <button type="submit" class="btn btn-primary">Salvar Template</button>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h3>Templates Cadastrados</h3></div>
+    <div class="card-body">
+        {% if templates %}
+        <table class="table">
+            <thead><tr><th>Tipo</th><th>Template</th><th>Status</th></tr></thead>
+            <tbody>
+                {% for t in templates %}
+                <tr>
+                    <td>{{ t.get_tipo_display }}</td>
+                    <td><pre style="white-space: pre-wrap; max-width: 400px;">{{ t.template|truncatewords:30 }}</pre></td>
+                    <td><span class="badge {% if t.ativo %}badge-success{% else %}badge-inactive{% endif %}">{% if t.ativo %}Ativo{% else %}Inativo{% endif %}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty-state">Nenhum template cadastrado. O sistema usará mensagens padrão.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h3>Mensagens Recentes</h3></div>
+    <div class="card-body">
+        {% if mensagens_recentes %}
+        <table class="table">
+            <thead><tr><th>Data</th><th>Telefone</th><th>Status</th><th>Tipo</th></tr></thead>
+            <tbody>
+                {% for m in mensagens_recentes %}
+                <tr>
+                    <td>{{ m.created_at|date:"d/m/Y H:i" }}</td>
+                    <td>{{ m.telefone }}</td>
+                    <td><span class="badge badge-{{ m.status }}">{{ m.get_status_display }}</span></td>
+                    <td>{{ m.template.get_tipo_display|default:"Manual" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty-state">Nenhuma mensagem enviada.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

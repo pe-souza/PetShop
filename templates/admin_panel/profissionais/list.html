@@ -1,0 +1,40 @@
+{% extends 'admin_panel/base_admin.html' %}
+
+{% block title %}Profissionais{% endblock %}
+{% block page_title %}Profissionais{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <a href="{% url 'admin_panel:profissionais_create' %}" class="btn btn-primary">+ Novo Profissional</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if profissionais %}
+        <table class="table">
+            <thead><tr><th>Nome</th><th>Telefone</th><th>Especialidades</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody>
+                {% for p in profissionais %}
+                <tr>
+                    <td>
+                        <span class="color-dot" style="background-color: {{ p.cor_agenda }}"></span>
+                        {{ p.nome }}
+                    </td>
+                    <td>{{ p.telefone|default:"-" }}</td>
+                    <td>{{ p.especialidades.count }} serviços</td>
+                    <td><span class="badge {% if p.ativo %}badge-success{% else %}badge-inactive{% endif %}">{% if p.ativo %}Ativo{% else %}Inativo{% endif %}</span></td>
+                    <td class="actions">
+                        <a href="{% url 'admin_panel:profissionais_edit' p.pk %}" class="btn btn-sm">Editar</a>
+                        <a href="{% url 'admin_panel:profissionais_horarios' p.pk %}" class="btn btn-sm">Horários</a>
+                        <a href="{% url 'admin_panel:profissionais_folgas' p.pk %}" class="btn btn-sm">Folgas</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty-state">Nenhum profissional cadastrado.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

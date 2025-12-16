@@ -1,0 +1,48 @@
+{% extends 'admin_panel/base_admin.html' %}
+
+{% block title %}Pets{% endblock %}
+{% block page_title %}Pets{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <form class="search-form" method="get">
+        <input type="text" name="q" value="{{ query }}" placeholder="Buscar pet ou dono..." class="form-input">
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+    <a href="{% url 'admin_panel:pets_create' %}" class="btn btn-primary">+ Novo Pet</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if pets %}
+        <table class="table">
+            <thead><tr><th>Nome</th><th>Dono</th><th>Espécie</th><th>Raça</th><th>Porte</th><th>Ações</th></tr></thead>
+            <tbody>
+                {% for pet in pets %}
+                <tr>
+                    <td><a href="{% url 'admin_panel:pets_detail' pet.pk %}">{{ pet.nome }}</a></td>
+                    <td><a href="{% url 'admin_panel:clientes_detail' pet.cliente.pk %}">{{ pet.cliente.nome }}</a></td>
+                    <td>{{ pet.get_especie_display }}</td>
+                    <td>{{ pet.raca|default:"-" }}</td>
+                    <td>{{ pet.get_porte_display|default:"-" }}</td>
+                    <td class="actions">
+                        <a href="{% url 'admin_panel:pets_edit' pet.pk %}" class="btn btn-sm">Editar</a>
+                        <a href="{% url 'admin_panel:agendamentos_create' %}" class="btn btn-sm btn-success">Agendar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if pets.has_other_pages %}
+        <div class="pagination">
+            {% if pets.has_previous %}<a href="?page={{ pets.previous_page_number }}&q={{ query }}">&laquo;</a>{% endif %}
+            <span>{{ pets.number }} / {{ pets.paginator.num_pages }}</span>
+            {% if pets.has_next %}<a href="?page={{ pets.next_page_number }}&q={{ query }}">&raquo;</a>{% endif %}
+        </div>
+        {% endif %}
+        {% else %}
+        <p class="empty-state">Nenhum pet encontrado.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
